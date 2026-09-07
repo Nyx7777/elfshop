@@ -6,6 +6,7 @@ import { assetUrl } from '@/lib/assets';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { act, freshGame, currentVisitor, items, visitors, news, rent, capacity, marketPrice, validateSave, type Game, type Action, type Stock } from '@/lib/game';
+import { migrateSave } from '@/lib/migration';
 const SAVE='dusklight-pawnshop-v1';
 const navs=[{Icon:Handshake,label:'柜台营业'},{Icon:Package,label:'货架仓库'},{Icon:FlaskConical,label:'炼金工坊'},{Icon:BookOpen,label:'旅人手记'},{Icon:ScrollText,label:'账簿契约'}];
 const factions={guild:'冒险者公会',guard:'王国卫队',night:'灰鸦夜市'};
@@ -17,7 +18,7 @@ export default function Home(){
  ref.current=game;
  const playSound=useCallback(()=>{if(!audioRef.current)return;const ctx=audioRef.current;void ctx.resume();const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.setValueAtTime(659,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+.35);gain.gain.setValueAtTime(.04,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.5);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.5)},[]);
  const send=useCallback((action:Action)=>{const next=act(ref.current,action);ref.current=next;setGame(next);if(next.outcome&&next.outcome!==game.outcome)setToast(next.outcome);playSound();return next},[game.outcome,playSound]);
- useEffect(()=>{try{const raw=localStorage.getItem(SAVE);if(raw){const saved=JSON.parse(raw);if(validateSave(saved)){ref.current=saved;setGame(saved)}else setToast('旧存档无法读取，已开启新篇章。')}}catch{setToast('无法读取存档。你仍然可以游玩并导出进度。')}setReady(true)},[]);
+ useEffect(()=>{try{const raw=localStorage.getItem(SAVE);if(raw){const parsed=JSON.parse(raw);const saved=migrateSave(parsed);if(saved&&validateSave(saved)){ref.current=saved;setGame(saved)}else setToast('旧存档无法读取，已开启新篇章。')}}catch{setToast('无法读取存档。你仍然可以游玩并导出进度。')}setReady(true)},[]);
  useEffect(()=>{if(!ready)return;try{localStorage.setItem(SAVE,JSON.stringify(game));setSaveStatus('已自动保存 · 本机')}catch{setSaveStatus('无法自动保存 · 请导出')}},[game,ready]);
  useEffect(()=>{setOffer(Math.round(currentVisitor(game).ask*.85));},[game.day,game.visitorIndex]);
  useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(''),4500);return()=>clearTimeout(t)},[toast]);
@@ -28,7 +29,7 @@ export default function Home(){
  const doEnd=()=>{send({type:'endDay'});setModal('');setTab(0)};
  const reset=()=>{const next=freshGame();ref.current=next;setGame(next);setTab(0);setModal('');setToast('一盏新灯亮起。你的七日故事重新开始。')};
  const exportSave=()=>{const blob=new Blob([JSON.stringify(game,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`暮灯当铺-第${game.day}天.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
- const importSave=async(file?:File)=>{if(!file)return;try{if(file.size>1000000)throw Error();const next=JSON.parse(await file.text());if(!validateSave(next))throw Error();ref.current=next;setGame(next);setModal('');setToast('存档已恢复。');setTab(0)}catch{setToast('这不是有效的暮灯当铺存档。')}if(fileRef.current)fileRef.current.value=''};
+ const importSave=async(file?:File)=>{if(!file)return;try{if(file.size>1000000)throw Error();const parsed=JSON.parse(await file.text());const next=migrateSave(parsed);if(!next||!validateSave(next))throw Error();ref.current=next;setGame(next);setModal('');setToast('存档已恢复。');setTab(0)}catch{setToast('这不是有效的暮灯当铺存档。')}if(fileRef.current)fileRef.current.value=''};
  const toggleSound=()=>{if(sound){void audioRef.current?.close();audioRef.current=null;setSound(false)}else{try{audioRef.current=new AudioContext();setSound(true);playSound()}catch{setToast('当前浏览器无法播放音效。')}}};
  const inventory=game.stock.filter(st=>filter==='all'||filter==='listed'&&st.listed||filter==='hidden'&&st.hidden||filter==='rare'&&items[st.itemId].memory);
  const sellCard=(st:Stock)=>{const it=items[st.itemId];return <article className={'stock-card '+(st.hidden?'is-hidden':'')} key={st.uid}><div className="stock-top"><span className="stock-symbol">{it.symbol}</span><span className={'tag '+(it.illegal?'danger-tag':'')}>{st.hidden?'暗格中':it.illegal?'违禁品':it.fake?'仿品':it.memory?'记忆遗物':'普通商品'}</span></div><h3>{it.name}</h3><p>{it.description}</p><div className="stock-prices"><span>成本 <b>{st.paid}</b></span><span>零售价 <b>{marketPrice(game,{...st,multiplier:st.listed?st.multiplier:pricing})}</b></span></div><div className="stock-actions"><Button className={st.listed?'small-button selected':'small-button'} disabled={locked||st.hidden} onClick={()=>send({type:'list',uid:st.uid,multiplier:pricing})}>{st.listed?<Check size={14}/>:<ShoppingBag size={14}/>} {st.listed?'已上架 · 撤下':'摆上货架'}</Button><Button className="small-button" disabled={locked} onClick={()=>send({type:'hide',uid:st.uid})}><Archive size={14}/>{st.hidden?'取出':'藏匿'}</Button></div><Button className="text-button wholesale" variant="ghost" disabled={locked} onClick={()=>send({type:'sell',uid:st.uid})}>立即批发 · {Math.round(marketPrice(game,{...st,multiplier:1})*.65)} 金币 <ArrowRight size={13}/></Button></article>};

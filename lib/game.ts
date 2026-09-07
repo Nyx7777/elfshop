@@ -53,8 +53,8 @@ export const news=[
 ];
 export type Stock={uid:number;itemId:string;paid:number;hidden:boolean;listed:boolean;multiplier:number};
 export type Log={day:number;text:string;delta:number};
-export type Game={version:1;day:number;visitorIndex:number;gold:number;energy:number;reputation:Record<Faction,number>;heat:number;stock:Stock[];log:Log[];examined:boolean;scanned:boolean;asked:boolean;observed:boolean;patience:number;resolved:boolean;dialogue:string;outcome:string;upgrades:string[];notes:string[];memories:string[];sold:number;profit:number;serial:number;ended:boolean;ending:string;summary:string[];kindness:number;returned:boolean};
-export const freshGame=():Game=>({version:1,day:1,visitorIndex:0,gold:600,energy:8,reputation:{guild:0,guard:0,night:0},heat:0,stock:[{uid:1,itemId:'water',paid:18,hidden:false,listed:false,multiplier:1},{uid:2,itemId:'charm',paid:25,hidden:false,listed:false,multiplier:1}],log:[{day:1,text:'开店资金',delta:600},{day:1,text:'房东：每天打烊收租，第七天可用 1000 金币买下店铺。',delta:0}],examined:false,scanned:false,asked:false,observed:false,patience:3,resolved:false,dialogue:'',outcome:'',upgrades:[],notes:[],memories:[],sold:0,profit:0,serial:3,ended:false,ending:'',summary:[],kindness:0,returned:false});
+export type Game={version:2;day:number;visitorIndex:number;gold:number;energy:number;reputation:Record<Faction,number>;heat:number;stock:Stock[];log:Log[];examined:boolean;scanned:boolean;asked:boolean;observed:boolean;patience:number;resolved:boolean;dialogue:string;outcome:string;upgrades:string[];notes:string[];memories:string[];sold:number;profit:number;serial:number;ended:boolean;ending:string;summary:string[];kindness:number;returned:boolean;seed:number};
+export const freshGame=():Game=>({version:2,day:1,visitorIndex:0,gold:600,energy:8,reputation:{guild:0,guard:0,night:0},heat:0,stock:[{uid:1,itemId:'water',paid:18,hidden:false,listed:false,multiplier:1},{uid:2,itemId:'charm',paid:25,hidden:false,listed:false,multiplier:1}],log:[{day:1,text:'开店资金',delta:600},{day:1,text:'房东：每天打烊收租，第七天可用 1000 金币买下店铺。',delta:0}],examined:false,scanned:false,asked:false,observed:false,patience:3,resolved:false,dialogue:'',outcome:'',upgrades:[],notes:[],memories:[],sold:0,profit:0,serial:3,ended:false,ending:'',summary:[],kindness:0,returned:false,seed:Math.floor(Math.random()*2**32)});
 export type Action={type:string;amount?:number;uid?:number;key?:string;multiplier?:number};
 export function currentVisitor(s:Game){return visitors[Math.min((s.day-1)*3+s.visitorIndex,visitors.length-1)]}
 export const rent=(day:number)=>30+10*day;
@@ -98,7 +98,8 @@ export function validateSave(data:unknown):data is Game {
  if(!data||typeof data!=='object')return false;
  const d=data as Game;
  const strings=(v:unknown):v is string[]=>Array.isArray(v)&&v.length<=500&&v.every(x=>typeof x==='string');
- return d.version===1&&Number.isInteger(d.day)&&d.day>=1&&d.day<=7&&Number.isInteger(d.visitorIndex)&&d.visitorIndex>=0&&d.visitorIndex<=3
+ const ver=(d as {version:unknown}).version;if(ver!==1&&ver!==2)return false;
+ return Number.isInteger(d.day)&&d.day>=1&&d.day<=7&&Number.isInteger(d.visitorIndex)&&d.visitorIndex>=0&&d.visitorIndex<=3
  &&['gold','energy','heat','patience','sold','profit','serial','kindness'].every(k=>Number.isFinite(d[k as keyof Game]))
  &&d.energy>=0&&d.energy<=8&&Number.isInteger(d.patience)&&d.patience>=0&&d.patience<=3
  &&['examined','scanned','asked','observed','resolved','ended','returned'].every(k=>typeof d[k as keyof Game]==='boolean')
