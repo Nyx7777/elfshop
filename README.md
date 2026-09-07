@@ -29,3 +29,17 @@
 - `public/portraits.png`：1536×1024、3×2 等分人物立绘；上排矮人铁匠、黑发女盗贼、金发王国骑士；下排采药少女（成年人）、拟态魔族男子、戴眼镜的成年学徒。深绿色背景、暖琥珀光、手绘奇幻动画风，无字无格线。
 
 原图由生成工具产出后复制进项目；人物网格由 CSS background-position 显示，无远程美术依赖。
+
+## GitHub Pages
+
+仓库：https://github.com/Nyx7777/elfshop
+
+GitHub Pages 采用独立的纯静态构建入口，复用同一套界面和游戏规则，无需服务器或 API：
+
+- `npm run build:pages`：生成 `dist-pages/`，基础路径为 `/elfshop/`。
+- `npm run preview:pages`：本地预览静态产物。
+- `.github/workflows/pages.yml`：推送到 `main` 后，自动运行规则测试、类型检查、静态构建和 Pages 部署。
+- 仓库 Settings → Pages 的发布来源需设为 GitHub Actions。
+- 默认目标地址为 `https://nyx7777.github.io/elfshop/`，以 GitHub 实际部署成功结果为准。
+
+原 Sites 构建仍使用 `npm run build`。不同域名的浏览器存档相互独立；迁移旧进度请先从旧站导出存档，再到新站导入。
