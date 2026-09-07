@@ -1,62 +1,15 @@
-export type Faction = 'guild' | 'guard' | 'night';
-export type Item = {id:string;name:string;symbol:string;category:string;value:number;description:string;clue:string;magic:string;illegal?:boolean;fake?:boolean;memory?:boolean;raw?:boolean};
-export const items:Record<string,Item> = {
- pendant:{id:'pendant',name:'月见草吊坠',symbol:'✧',category:'饰品 · 精灵遗物',value:160,description:'银链已经失去光泽，琥珀里封着一朵不会凋谢的小花。',clue:'银质纯正。链扣内刻着勇者雷恩的名字，年代与讨伐战争相符。',magic:'保存魔法里有一段记忆：年轻的剑士站在花田中，说「明年一起再来吧」。',memory:true},
- sword:{id:'sword',name:'断刃骑士剑',symbol:'⚔',category:'武器 · 待修复',value:125,description:'刃口有一处缺损，剑格上依稀可见旧王国的纹章。',clue:'精钢锻造，确为军用剑。修复后价值会提高 70 金币。',magic:'残留的是守护魔法，没有诅咒。',raw:true},
- core:{id:'core',name:'绯红魔核',symbol:'◈',category:'魔材 · 来源不明',value:220,description:'握在手心会感到一阵不属于自己的心跳。',clue:'外壳有新鲜切痕，来自王国禁止流通的魔族遗体。',magic:'检测到侵蚀性魔力。这是违禁品，可在仓库藏匿以避开巡查。',illegal:true},
- water:{id:'water',name:'月泉原液',symbol:'◒',category:'炼金 · 待净化',value:28,description:'林间收集的泉水带着淡淡蓝光，也混入了些许杂质。',clue:'真正的月泉水。工坊中可净化成价值 85 金币的月露。',magic:'月相魔力稳定，没有诅咒。',raw:true},
- potion:{id:'potion',name:'净化月露',symbol:'♜',category:'炼金 · 恢复药剂',value:85,description:'清澈的液体映着一轮小小的月亮，是旅途上可靠的补给。',clue:'纯净度合格。冒险者公会的常备药品。',magic:'温和的恢复魔法，无危险成分。'},
- crown:{id:'crown',name:'「圣王」金冠',symbol:'♛',category:'饰品 · 王室旧藏',value:24,description:'金色表面闪闪发亮，卖家保证是百年前的圣王遗物。',clue:'镀层下露出了铜色，宝石内部有气泡。这只是廉价仿品。',magic:'没有任何王室加护。仿品，实际价值只有 24 金币。',fake:true},
- grimoire:{id:'grimoire',name:'逆时禁书',symbol:'▤',category:'古书 · 禁忌魔法',value:310,description:'书页倒着翻动，墨迹似乎比写下它的人更加年轻。',clue:'封底是王国禁书名录上的第十三号符文。',magic:'它只能倒转物品的时间，却以读者的记忆为代价。违禁品。',illegal:true},
- seed:{id:'seed',name:'长梦树种',symbol:'❦',category:'植物 · 古代种',value:105,description:'据说种下它的人，要等一百年才看得到第一次开花。',clue:'果壳来自旧精灵森林，如今已很少有人认得它。',magic:'浓厚但安定的生命魔力，可以合法交易。'},
- ring:{id:'ring',name:'归途戒指',symbol:'◎',category:'饰品 · 旅人遗物',value:190,description:'一枚磨损严重的戒指，总是朝着北方微微发热。',clue:'戒指内部刻着「别忘了回家」。材料是星银。',magic:'它保存着一个家的坐标，那个地方现在只剩下野花。',memory:true},
- scale:{id:'scale',name:'古龙鳞片',symbol:'◇',category:'魔材 · 龙类素材',value:250,description:'黑金色鳞片在灯下投出一片巨大的翅影。',clue:'纹理完整，是古龙自然脱落的鳞片，王国准许买卖。',magic:'龙炎魔力纯净，适合附魔，价值不菲。'},
- bell:{id:'bell',name:'无声银铃',symbol:'♧',category:'饰品 · 纪念物',value:130,description:'怎么摇晃都没有声音，系铃的蓝绳却一直像新的一样。',clue:'铃舌是完整的。它被人为施加了沉默魔法。',magic:'解开魔法，听见勇者小队围着篝火的笑声。',memory:true},
- blood:{id:'blood',name:'赤月精粹',symbol:'♦',category:'炼金 · 禁售药剂',value:280,description:'深红液体似乎在寻找瓶塞上最细小的缝隙。',clue:'无商会封印，疑似地下炼金产物。',magic:'强效魔力伴随精神侵蚀。王国明令禁止交易。',illegal:true},
- compass:{id:'compass',name:'星轨罗盘',symbol:'✵',category:'工具 · 探索装备',value:145,description:'指针不指向北方，只会指向主人最想去的地方。',clue:'齿轮精密，星银指针，产自矮人山城。',magic:'寻路符文完好，可放心收购。'},
- charm:{id:'charm',name:'纸制护身符',symbol:'✥',category:'魔具 · 手作物',value:55,description:'针脚有些歪扭，但缝制的人显然很用心。',clue:'廉价材料，却用上了正统的缝符技法。',magic:'小小的守护魔法是真的。能挡住一次轻微伤害。'},
- repaired:{id:'repaired',name:'修复的骑士剑',symbol:'⚔',category:'武器 · 精钢',value:195,description:'被细心修好的老剑又能陪伴一位新的旅人。',clue:'刃口已修复，状态良好。',magic:'守护魔法运转正常。'}
-};
-export type Visitor={name:string;title:string;faction:Faction;item:string;ask:number;min:number;portrait:number;line:string;story:string;observation:string;demon?:boolean;poor?:boolean};
-const v=(name:string,title:string,faction:Faction,item:string,ask:number,min:number,portrait:number,line:string,story:string,observation:string,extra:Partial<Visitor>={}):Visitor=>({name,title,faction,item,ask,min,portrait,line,story,observation,...extra});
-export const visitors:Visitor[]=[
- v('艾琳','远行的精灵','guild','pendant',100,75,-1,'这个吊坠……是一个已经不在的人送的。我想换一点路费，去看看他曾经说过的那片花海。','八十年前，有个人答应陪我看花。对我来说，仿佛只是上个星期。若你愿意保留吊坠，七天后我会回来。','她的指尖反复摩挲银链。说起八十年前的约定，她的眼神依然很温柔。'),
- v('布隆','矮人锻造师','guild','sword',80,55,0,'好钢不会说谎。这把剑修一修，还能用上一百年！','这把剑陪老兵走过北境。他用不动了，让我给它找个新主人。','厚厚的茧子和铁屑粘在掌心，是长年锻造留下的痕迹。'),
- v('薇斯','灰鸦的信使','night','core',130,90,1,'掌柜的，来点能赚大钱的？不用问它是从哪儿来的。','卫队把所有魔核都归为禁品。可城外那些用不起暖炉的人，也需要熬过冬天。','她的袖口藏着一枚灰鸦徽章。说话时总在留意门口。'),
- v('米拉','林间采药人','guild','water',22,15,3,'今早刚从月泉取的。再不净化，里面的魔力就要散掉了。','公会的伤员还在等药。净化后的月露，寄售给公会总不会愁销路。','她身上有青草味，手指染着采药留下的绿色汁液。'),
- v('奥斯','没落贵族','guard','crown',180,100,2,'圣王戴过的金冠！这个价格，只是因为我赶时间。','家族传了很多代。鉴定证书？嗯……我忘在另一座宅邸了。','他避开你的目光，指甲缝里有新鲜的金色颜料。'),
- v('诺伊','迷路的学徒','guild','charm',40,25,5,'这是我做的第一个护身符。够不够换一顿晚饭？','老师说，好的魔法是让人安心。虽然我现在只会这一种。','他掏出护身符时，肚子轻轻叫了一声。', {poor:true}),
- v('赫克','退役的王国骑士','guard','scale',170,125,2,'从北境带回来的。不是偷猎，古龙每一百年会换一次鳞。','那头龙比王国还要年长。它只让我帮忙挠一下够不到的后背。','盔甲上的伤痕很旧。他出示了盖着王国钢印的采集许可。'),
- v('无名旅人','披着人皮的影子','night','blood',100,65,4,'一瓶好药。我的……朋友，都很喜欢。请把门关上。','我记不清家在哪里。人类一般把那些共同居住的人叫作什么来着？','烛火里没有他的影子。他说「母亲」时，像在复述一个没学会的词。',{demon:true}),
- v('米拉','林间采药人','guild','seed',70,45,3,'森林深处捡到的。也许有人愿意等它开花。','种子长大要一百年。我们看不到，但也许我们的孩子可以。','她小心把种子包了三层，外面还放着一小块湿润的苔藓。'),
- v('薇斯','灰鸦的信使','night','grimoire',190,140,1,'今晚卫队会查货。买这本书之前，先想好藏在哪里。','有人愿意用所有积蓄，换亡者留在杯沿的一次温度。','书封上有明显的禁术印记，她没有试图掩饰。'),
- v('布隆','矮人锻造师','guild','compass',95,65,0,'它不指北，只指向你心里的方向。比大多数人的脑袋靠谱。','我年轻时它一直指向矿山。这几年，却总指向老伴的墓。','他用指节敲了敲罗盘，指针依旧稳稳朝向镇外。'),
- v('塞恩','守夜的年轻骑士','guard','ring',125,90,2,'父亲留下的。现在我得买一匹能跑到边境的马。','他总说下次休假就回家，最后只寄回了戒指。我不想再等了。','他握着戒指，眼睛却始终望向敞开的店门。'),
- v('米拉','林间采药人','guild','water',25,15,3,'北境起雾了，药剂价格在涨。今天的月泉水很清。','公会说，魔王倒下不代表所有伤口都愈合了。','水瓶贴着今日的采集日期，瓶口封条完好。'),
- v('诺伊','努力的学徒','guild','bell',85,55,5,'老师说这铃铛坏了。但我总觉得……它在等什么。','我在旧勇者纪念馆的废物箱里找到的。有个字，像是「再见」。','他在认真聆听一只不会响的铃铛，并不着急催你。'),
- v('薇斯','灰鸦的信使','night','core',145,95,1,'你已经知道规矩了。好货，好价，没有名字。','今晚夜市开张。愿意冒险的人，总会找到自己的位置。','她带来一张灰鸦夜市的请柬。背面写着：不问来处。'),
- v('赫克','退役的王国骑士','guard','sword',90,55,2,'明天有最后一次巡查。别让那些乱七八糟的东西毁了你的店。','王国需要法律。但我当年拿起剑，不是为了为难卖家当的孩子。','他把佩剑留在门外，独自走到柜台前。'),
- v('无名商人','过分完美的微笑','night','scale',120,90,4,'我可以提供很多这样的东西。只要你让我……进到里面。','大家都喜欢金币。喜欢，是交换利益的意思，对吧？','他呼吸得很规律，但窗上的薄霜没有被呼吸融化。影子慢了半拍。',{demon:true}),
- v('米拉','林间采药人','guild','water',22,15,3,'最后一批泉水啦。等忙完，去看看街上的灯会吧。','艾琳去了山坡上的墓园。她说，原来人类已经学会把花种在那里。','她的篮子里除药草外，还装着几朵月见草。'),
- v('布隆','矮人锻造师','guild','scale',175,130,0,'给你的最后一笔好生意。听说今天你要买下这间店？','开店和打铁一样。别只看锤下是什么，还得知道它最后会到谁手里。','他拎来一壶热茶，放在柜台边。没有收钱。'),
- v('诺伊','即将出发的学徒','guild','compass',90,60,5,'我找到冒险队了。卖掉这个，刚好够大家坐车去北境。','等我成为了不起的魔法师，也想开一家这样的店，让人能歇歇脚。','他的旅包鼓鼓的，护身符牢牢挂在胸前。'),
- v('艾琳','看过花海的精灵','guild','seed',60,35,-1,'花开了。原来他没有忘记……那片山坡，全都是月见草。','我见到了他的孙女。她笑起来很像他。七天很短，但我想，我会记住这七天。','她这次终于笑了。目光扫过货架，像在寻找一个熟悉的小小光点。')
-];
-export const news=[
- '王都通告：魔王讨伐八十周年，旧时代遗物交易增多。',
- '月泉商路恢复：公会药剂需求上涨，月露今天溢价 25%。',
- '王国通告：今夜巡查违禁魔材。藏匿的货物不会上架出售。',
- '王都通告：今夜再查禁书；请在打烊前整理仓库。',
- '灰鸦传闻：今夜夜市收货，违禁品售价额外提高 35%。',
- '卫队通告：最后一次巡查将于今夜进行。谨防拟态魔族。',
- '霜叶灯会开始了。所有合法商品今天溢价 20%。'
-];
+export { type Faction, type Item, items } from './items.ts';
+export { type Visitor, visitors } from './visitors.ts';
+export { news } from './events.ts';
+import { type Faction, items } from './items.ts';
+import { type Visitor, visitors } from './visitors.ts';
+
 export type Stock={uid:number;itemId:string;paid:number;hidden:boolean;listed:boolean;multiplier:number};
 export type Log={day:number;text:string;delta:number};
 export type Game={version:2;day:number;visitorIndex:number;gold:number;energy:number;reputation:Record<Faction,number>;heat:number;stock:Stock[];log:Log[];examined:boolean;scanned:boolean;asked:boolean;observed:boolean;patience:number;resolved:boolean;dialogue:string;outcome:string;upgrades:string[];notes:string[];memories:string[];sold:number;profit:number;serial:number;ended:boolean;ending:string;summary:string[];kindness:number;returned:boolean;seed:number};
 export const freshGame=():Game=>({version:2,day:1,visitorIndex:0,gold:600,energy:8,reputation:{guild:0,guard:0,night:0},heat:0,stock:[{uid:1,itemId:'water',paid:18,hidden:false,listed:false,multiplier:1},{uid:2,itemId:'charm',paid:25,hidden:false,listed:false,multiplier:1}],log:[{day:1,text:'开店资金',delta:600},{day:1,text:'房东：每天打烊收租，第七天可用 1000 金币买下店铺。',delta:0}],examined:false,scanned:false,asked:false,observed:false,patience:3,resolved:false,dialogue:'',outcome:'',upgrades:[],notes:[],memories:[],sold:0,profit:0,serial:3,ended:false,ending:'',summary:[],kindness:0,returned:false,seed:Math.floor(Math.random()*2**32)});
 export type Action={type:string;amount?:number;uid?:number;key?:string;multiplier?:number};
-export function currentVisitor(s:Game){return visitors[Math.min((s.day-1)*3+s.visitorIndex,visitors.length-1)]}
+export function currentVisitor(s:Game):Visitor{return visitors[Math.min((s.day-1)*3+s.visitorIndex,visitors.length-1)]}
 export const rent=(day:number)=>30+10*day;
 export const capacity=(s:Game)=>s.upgrades.includes('shelves')?16:8;
 export function marketPrice(s:Game,stock:Stock){const item=items[stock.itemId];let m=s.day===7&&!item.illegal?1.2:1;if(s.day===2&&item.id==='potion')m=1.25;if(item.illegal&&s.day===5)m=1.35;return Math.round(item.value*m*stock.multiplier)}
