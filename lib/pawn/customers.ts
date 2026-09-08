@@ -1,4 +1,5 @@
 import { catalog } from './catalog.ts';
+import { rememberVisibleGoods } from './discovery.ts';
 import { value } from './inventory.ts';
 import { pick, random } from './random.ts';
 import type { Faction, Goods, Shop, Visit } from './types.ts';
@@ -277,6 +278,7 @@ export function openDay(s: Shop) {
   if (story) s.visits.push(story);
   const count = s.day < 3 ? 4 : 6;
   while (s.visits.length < count) s.visits.push(generateVisit(s));
+  rememberVisibleGoods(s);
 }
 export function buyerAccepts(s: Shop, v: Visit, g: Goods): string | null {
   const d = catalog[g.itemId];

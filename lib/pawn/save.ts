@@ -1,5 +1,6 @@
 import { catalog, DEBT, upgrades } from './catalog.ts';
 import { fits } from './inventory.ts';
+import { recoverKnownItems } from './discovery.ts';
 import type { Goods, Shop } from './types.ts';
 
 export const SAVE_KEY = 'dusklight-pawnshop-v3';
@@ -37,6 +38,14 @@ function goods(x: unknown): x is Goods {
 export function validateShop(data: unknown): data is Shop {
   if (!record(data) || data.version !== 3) return false;
   const s = data;
+  if (
+    !array(s.knownItems, Object.keys(catalog).length) ||
+    !s.knownItems.every(
+      (id) => typeof id === 'string' && Object.hasOwn(catalog, id),
+    ) ||
+    new Set(s.knownItems).size !== s.knownItems.length
+  )
+    return false;
   if (
     !num(s.seed, 0, 4294967295) ||
     !num(s.day, 1, 10000) ||
@@ -216,7 +225,12 @@ export function parseShop(raw: string): Shop | null {
   try {
     if (raw.length > 2000000) return null;
     const data: unknown = JSON.parse(raw);
-    return validateShop(data) ? data : null;
+    const needsDiscovery =
+      record(data) && data.version === 3 && !Object.hasOwn(data, 'knownItems');
+    if (needsDiscovery) data.knownItems = [];
+    if (!validateShop(data)) return null;
+    if (needsDiscovery) recoverKnownItems(data);
+    return data;
   } catch {
     return null;
   }

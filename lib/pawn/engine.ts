@@ -1,5 +1,6 @@
 import { catalog, DEBT, EXPENSE, specialties, upgrades } from './catalog.ts';
 import { buyerAccepts, buyerCeiling, makeGoods, openDay } from './customers.ts';
+import { rememberVisibleGoods } from './discovery.ts';
 import { findSpace, fits, pledged, repairCost, value } from './inventory.ts';
 import { pick, random } from './random.ts';
 import type { Action, Goods, Shop, Specialty, Visit } from './types.ts';
@@ -68,6 +69,7 @@ export function freshShop(seed = Math.floor(Math.random() * 4294967296)): Shop {
     energy: 12,
     serial: 1,
     stock: [],
+    knownItems: [],
     contracts: [],
     visits: [],
     cursor: 0,
@@ -408,6 +410,7 @@ export function actShop(state: Shop, action: Action): Shop {
       if (!v || !v.resolved) return message(s, '先完成或婉拒当前交易。');
       security(s, v);
       s.cursor++;
+      rememberVisibleGoods(s);
       if (s.day >= 4 && s.cursor === 3 && random(s) < 0.1 + s.heat / 180)
         raid(s);
       message(

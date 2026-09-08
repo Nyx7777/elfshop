@@ -369,23 +369,25 @@ export function Journal({ shop: s }: Pick<Controls, 'shop'>) {
       </section>
       <section className="p-panel">
         <div className="p-section-title">
-          <span>已经认识的货物</span>
-          <small>名称与用途，真伪仍需亲自判断</small>
+          <span>见过的货物 · {s.knownItems.length} 种</span>
+          <small>随实际见货记录，真伪与诅咒仍需逐件鉴定</small>
         </div>
         <div className="p-catalog">
-          {Object.values(catalog).map((d) => (
-            <article key={d.id}>
-              <span>{d.icon}</span>
-              <div>
-                <strong>{d.name}</strong>
-                <small>
-                  {categoryNames[d.category]} · {d.w}×{d.h} 格
-                  {d.illegal ? ' · 禁品' : ''}
-                </small>
-                <p>{d.description}</p>
-              </div>
-            </article>
-          ))}
+          {s.knownItems
+            .map((id) => catalog[id])
+            .map((d) => (
+              <article key={d.id}>
+                <span>{d.icon}</span>
+                <div>
+                  <strong>{d.name}</strong>
+                  <small>
+                    {categoryNames[d.category]} · {d.w}×{d.h} 格
+                    {d.illegal ? ' · 禁品' : ''}
+                  </small>
+                  <p>{d.description}</p>
+                </div>
+              </article>
+            ))}
         </div>
       </section>
     </div>

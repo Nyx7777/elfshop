@@ -79,6 +79,7 @@ export type Shop = {
   energy: number;
   serial: number;
   stock: Goods[];
+  knownItems: string[];
   contracts: Contract[];
   visits: Visit[];
   cursor: number;
